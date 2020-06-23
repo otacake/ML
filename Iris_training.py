@@ -14,11 +14,18 @@ ppn.fit(X,y)
 
 ya = df.iloc[101:,4].values
 xa = df.iloc[101:,[0,2]].values
-
+count = 0
+loop = 0
 for xi,real in zip(xa,ya):
+    loop +=1
     ans = ppn.predict(xi)
     pre = "Iris-setosa"
     if ans >= 0.0:
-        pre = "Iris-verginica"
+        pre = "Iris-virginica"
     print("predict is " +pre, "the ans is",real)
+    if pre == real:
+        count +=1
 
+print("--------------------")
+print("精度は"+str((count/loop)*100)+"%です!")
+print("--------------------")
