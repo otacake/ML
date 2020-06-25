@@ -16,7 +16,7 @@ y_xor = np.where(y_xor,1,-1)
 #だったら一番だるい内積計算を楽しませんか、カーネル関数で
 
 from sklearn.svm import SVC
-svm = SVC(kernel="rbf",random_state=1,gamma=0.1,C=10.0)
+svm = SVC(kernel="rbf",random_state=1,gamma=0.05,C=10.0)
 svm.fit(X_xor,y_xor) #学習
 plot_decision_regions(X_xor,y_xor,classifier=svm) #グラフへの描写
 plt.show()
