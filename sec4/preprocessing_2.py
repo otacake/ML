@@ -25,4 +25,5 @@ std = StandardScaler()
 X = df.iloc[:,1:2].values
 X_nor = mms.fit_transform(X)
 print(X_nor)
-print(std.fit_transform(X))
+print(std.fit_transform(X)) #testデータもtrainのやつでセットアップ
+
