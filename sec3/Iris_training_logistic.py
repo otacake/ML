@@ -1,5 +1,44 @@
 from sklearn import datasets
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+
+def plot_decision_regions(X, y, classifier, test_idx=None,resolution=0.02):
+    # setup marker generator and color map
+    markers = ('s', 'x', 'o', '^', 'v')
+    colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+    cmap = ListedColormap(colors[:len(np.unique(y))])
+
+
+
+    # plot the decision surface
+
+    x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
+                           np.arange(x2_min, x2_max, resolution))
+
+    Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+    Z = Z.reshape(xx1.shape)
+    plt.contourf(xx1, xx2, Z, alpha=0.3, cmap=cmap)
+    plt.xlim(xx1.min(), xx1.max())
+    plt.ylim(xx2.min(), xx2.max())
+    # plot class samples
+
+    for idx, cl in enumerate(np.unique(y)):
+        plt.scatter(x=X[y == cl, 0],
+                    y=X[y == cl, 1],
+                    alpha=0.8,
+                    c=colors[idx],
+                    marker=markers[idx],
+                    label=cl,
+                    edgecolor='black')
+
+    if test_idx:
+        X_test,y_test = X[test_idx,:],y[test_idx]
+        plt.scatter(X_test[:,0],X_test[:,1],c='',alpha=1.0,linewidths=1,marker="o",s=55,label="test set")
+
 
 iris = datasets.load_iris()
 
@@ -11,11 +50,6 @@ y = iris.target
 
 from sklearn.model_selection import train_test_split
 X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3,random_state=1,stratify=y)
-#トレーニングデータとテストデータを分けている
-#この書き方だと3割がテストに
-#random_stateによって内部で生成される乱数の調整
-#この乱数の調整によってデータの分割に再現性が生まれる
-#stratifyによってトレーニングデータにも、テストデータにも出てくるラベルの比率が指定したベクトルの比率と同じになる
 
 #ここから特徴量の標準化をする
 from sklearn.preprocessing import StandardScaler #オブジェクト
@@ -26,15 +60,17 @@ X_test_std = sc.transform(X_test)
 
 #ここまででようやく下準備ができたといえるみたい？(実際はもっと大変)
 
-from sklearn.linear_model import LogisticRegression #ロジスティック回帰のオブジェクト,三つ以上でもやれる
-lr = LogisticRegression(C=100.0,random_state=1)
-lr.fit(X_train_std,y_train)
+from sklearn.linear_model import Perceptron
+ppn = Perceptron(n_iter_no_change=40,eta0=0.1,random_state=1,shuffle=True)
+ppn.fit(X_train_std,y_train)
 
-pre = lr.predict(X_test_std) #予想結果をarrayで出力してくれるから下みたいに遊べる
-miscla = 0
-for i in range(len(pre)):
-    dic = {0:"てけもと",1:"あやちぇり",2:"おたけ"}
-    print(str(i+1)+": 予想は"+dic[pre[i]],"正解は"+dic[y_test[i]])
-    if pre[i] != y_test[i]:
-        miscla+=1
-print("精度は",str(1-(miscla/len(pre))),"%です！")
+y_pred = ppn.predict(X_test_std)
+
+n = len(y_test)
+for i in range(n):
+    print("predict:",str(y_pred[i]),"ans:",str(y_test[i]))
+
+X_combined_std = np.vstack((X_train_std,X_test_std))
+y_combined = np.hstack((y_train,y_test))
+plot_decision_regions(X=X_combined_std,y=y_combined,classifier=ppn,test_idx=range(105,150))
+plt.show()
