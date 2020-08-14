@@ -9,3 +9,7 @@ csv_data = '''A,B,C,D
             10.0,11.0,12.0,'''
 
 df = pd.read_csv(StringIO(csv_data))
+from sklearn.impute import SimpleImputer
+imr = SimpleImputer()
+imr.fit(df)
+imr.fit_transform(df)

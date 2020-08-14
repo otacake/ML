@@ -66,14 +66,13 @@ X_train_std = std.fit_transform(X_train)
 X_test_std = std.transform(X_test)
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.decomposition import PCA
-pca = PCA(n_components=2)
-X_train_pca = pca.fit_transform(X_train_std)
-X_test_pca = pca.transform(X_test_std)
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+lda = LinearDiscriminantAnalysis(n_components=2)
+X_train_lda = lda.fit_transform(X_train_std,y_train)
+X_test_lda = lda.transform(X_test_std)
 
 lr = LogisticRegression()
+lr.fit(X_train_lda,y_train)
 
-lr.fit(X_train_pca,y_train)
-
-plot_decision_regions(X_test_pca,y_test,classifier=lr)
+plot_decision_regions(X_test_lda,y_test,lr)
 plt.show()
