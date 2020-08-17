@@ -12,19 +12,9 @@ df.columns = ['CRIM', 'ZN', 'INDUS', 'CHAS',
               'NOX', 'RM', 'AGE', 'DIS', 'RAD',
               'TAX', 'PTRATIO', 'B', 'LSTAT', 'MEDV']
 
-
+sns.set(style='whitegrid',context='notebook')
 cols = ["LSTAT","INDUS","RM","MEDV"]
 
-X = df[["RM"]].values
-y = df["MEDV"].values
-
-def lin_regplot(X,y,model):
-    plt.scatter(X,y,c="blue")
-    plt.plot(X,model.predict(X),color="red")
-    return None
-
-from sklearn.linear_model import LinearRegression
-slr = LinearRegression()
-slr.fit(X,y)
-lin_regplot(X,y,slr)
+cm = np.corrcoef(df[cols].values.T)
+hm = sns.heatmap(cm,cbar=True,annot=True,square=True,xticklabels=cols,yticklabels=cols)
 plt.show()
