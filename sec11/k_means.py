@@ -10,7 +10,7 @@ plt.grid()
 plt.show()
 """
 from sklearn.cluster import KMeans
-km = KMeans(n_clusters=3,random_state=0)
+km = KMeans(n_clusters=3,random_state=0,init="random")
 y_km = km.fit_predict(X)
 li = [0.0,1.0,2.0]
 dic1 = {0.0:'lightgreen',1.0:'orange',2.0:'lightblue'}
