@@ -10,6 +10,9 @@ csv_data = '''A,B,C,D
 
 df = pd.read_csv(StringIO(csv_data))
 from sklearn.impute import SimpleImputer
-imr = SimpleImputer()
+imr = SimpleImputer(strategy='constant',fill_value=0)
 imr.fit(df)
 imr.fit_transform(df)
+
+imputed_data = imr.transform(df.values)
+print(imputed_data)
